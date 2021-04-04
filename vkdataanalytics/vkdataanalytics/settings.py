@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users_max_comments',
+    'report',
+    'home',
 ]
 
 MIDDLEWARE = [
@@ -132,4 +133,4 @@ ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 
 V = os.getenv('V')
 
-OWNER_ID = os.getenv('OWNER_ID')
+OWNER_ID = os.getenv('OWNER_ID')    # remove
