@@ -5,4 +5,5 @@ app_name = 'report'
 urlpatterns = [
     path('', views.index_view, name='index'),
     path('update/', views.update_data, name='update'),
+    path('progress/<str:task_id>', views.get_progress, name='progress')
 ]

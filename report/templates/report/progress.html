@@ -1,0 +1,16 @@
+  {% extends 'base.html' %}
+
+{% block content %}
+
+  <br/>
+<iframe width="800" height="650" src="https://datastudio.google.com/embed/reporting/b065b8f8-7872-40b4-bf9c-b7a7d67b4839/page/XCBBC" frameborder="0" style="border:0" allowfullscreen></iframe>
+<br/>
+
+<div class="badge bg-primary text-wrap" style="width: 10rem; ">
+    <p class="h6"> Status: <strong>{{ state }}</strong></p>
+</div>
+    <small>(Reload the page to see update status)</small>
+
+<a class="btn btn-secondary btn-sm" href="{% url 'report:index' %}" role="button">Back to report page</a>
+<br/>
+{% endblock %}
