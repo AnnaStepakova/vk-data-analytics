@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Home</title>
-</head>
-<body>
-<a href="{% url 'report:index' %}">Data</a>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<a class="btn btn-secondary btn-sm" href="{% url 'report:index' %}" role="button">Show report</a>
+
+{% endblock %}
