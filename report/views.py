@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from .tasks import process_posts
 from celery.result import AsyncResult
@@ -18,4 +18,9 @@ def update_data(request):
 
 def get_progress(request, task_id):
     result = AsyncResult(id=task_id)
-    return render(request, 'report/progress.html', {'state': result.state})
+    return render(request, 'report/progress.html', {'state': result.state, 'task_id': task_id})
+
+
+def progress_status(request, task_id):
+    result = AsyncResult(id=task_id)
+    return JsonResponse({'state': result.state, 'task_id': task_id})

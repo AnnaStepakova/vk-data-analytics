@@ -6,11 +6,27 @@
 <iframe width="800" height="650" src="https://datastudio.google.com/embed/reporting/b065b8f8-7872-40b4-bf9c-b7a7d67b4839/page/XCBBC" frameborder="0" style="border:0" allowfullscreen></iframe>
 <br/>
 
-<div class="badge bg-primary text-wrap" style="width: 10rem; ">
-    <p class="h6"> Status: <strong>{{ state }}</strong></p>
+<div id="updated-div" class="badge bg-primary text-wrap" style="width: 10rem; ">
+   Status: <p id="updated-p" class="h6" style="text-align:center">{{ state }}</p>
 </div>
-    <small>(Reload the page to see update status)</small>
+    <a class="btn btn-secondary btn-sm" href="{% url 'report:index' %}" role="button">Back to report page</a>
 
-<a class="btn btn-secondary btn-sm" href="{% url 'report:index' %}" role="button">Back to report page</a>
+    <script type="text/javascript">
+    function refresh() {
+        $.ajax({
+            type: 'GET',
+            url: '{% url 'report:status' task_id %}',
+            success: function(data) {
+                var field = document.getElementById("updated-p")
+                field.textContent = data['state']
+            }
+        });
+    }
+    setInterval(refresh, 3000);
+    $(function(){
+        refresh();
+    });
+    </script>
+
 <br/>
 {% endblock %}
