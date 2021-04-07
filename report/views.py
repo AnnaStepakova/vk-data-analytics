@@ -1,7 +1,9 @@
+import vk
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from .utils import fill_db_tables
+from .tasks import process_posts
+from vkdataanalytics.settings import ACCESS_TOKEN
 
 
 def index_view(request):
@@ -9,5 +11,5 @@ def index_view(request):
 
 
 def update_data(request):
-    fill_db_tables()
+    process_posts.delay(days=14)
     return HttpResponseRedirect(reverse('report:index'))

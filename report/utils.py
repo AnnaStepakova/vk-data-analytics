@@ -3,7 +3,9 @@ import vk
 import pytz
 from datetime import datetime
 from dateutil import tz
-from vkdataanalytics.settings import ACCESS_TOKEN, V, OWNER_ID
+from django.db import IntegrityError
+
+from vkdataanalytics.settings import V, OWNER_ID, ACCESS_TOKEN
 from .models import VKUser, Post, Comment
 
 
@@ -20,8 +22,11 @@ def _add_new_vkuser(api, user_id):
         except requests.exceptions.RequestException:
             print('ConnectionError')
         name = f"{user[0]['first_name']} {user[0]['last_name']}"
-    obj, _ = VKUser.objects.get_or_create(id=user_id, name=name)
-    return obj
+    try:
+        obj, _ = VKUser.objects.get_or_create(id=user_id, name=name)
+        return obj
+    except IntegrityError:
+        return VKUser.objects.get(id=user_id)
 
 
 def fill_db_tables(days=14):
@@ -54,6 +59,7 @@ def fill_db_tables(days=14):
                     post = Post.objects.get(id=post_id)
                     post.likes = post_json['likes']['count']
 
+                # comments
                 try:
                     comments = vkapi.wall.getComments(owner_id=OWNER_ID, post_id=post_id, need_likes=True, v=V)
                 except requests.exceptions.RequestException:
