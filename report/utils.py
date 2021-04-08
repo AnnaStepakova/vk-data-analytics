@@ -45,7 +45,7 @@ def fill_db_tables(days=14):
         for i, post_json in enumerate(posts['items'], start=offset-count):
             date = datetime.fromtimestamp(post_json['date'], tz=tz.gettz('Europe/Moscow'))
             curr_date = datetime.now(pytz.timezone('Europe/Moscow'))
-            print((curr_date - date).days)
+            print(f"Process post that was posted {(curr_date - date).days} days ago...")
             if (curr_date - date).days <= days:
                 post_id = post_json['id']
                 from_id = post_json['from_id']
