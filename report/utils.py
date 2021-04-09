@@ -1,6 +1,7 @@
 import requests
 import vk
 import pytz
+from vk.exceptions import VkException
 from datetime import datetime
 from dateutil import tz
 from django.db import IntegrityError
@@ -13,14 +14,16 @@ def _add_new_vkuser(api, user_id):
     if user_id < 0:
         try:
             group = api.groups.getById(group_ids=-user_id, v=V)
-        except requests.exceptions.RequestException:
-            print('ConnectionError')
+        except VkException:
+            print('VKException occured...')
+            return None
         name = group[0]['name']
     else:
         try:
             user = api.users.get(user_ids=user_id, v=V)
-        except requests.exceptions.RequestException:
-            print('ConnectionError')
+        except VkException:
+            print('VKException occured...')
+            return None
         name = f"{user[0]['first_name']} {user[0]['last_name']}"
     try:
         obj, _ = VKUser.objects.get_or_create(id=user_id, name=name)
@@ -38,7 +41,7 @@ def fill_db_tables(days=14):
     while len(posts['items']) == count:
         try:
             posts = vkapi.wall.get(owner_id=OWNER_ID, offset=offset, count=count, v=V)
-        except requests.exceptions.RequestException:
+        except VkException:
             print('ConnectionError')
             continue
         offset += count
@@ -52,6 +55,8 @@ def fill_db_tables(days=14):
 
                 if not Post.objects.filter(id=post_id).exists():
                     vkuser = _add_new_vkuser(api=vkapi, user_id=from_id)
+                    if not vkuser:
+                        continue
                     post = Post.objects.create(id=post_id, author=vkuser,
                                                      date=datetime.fromtimestamp(post_json['date'], tz=tz.gettz('Europe/Moscow')),
                                                      likes=post_json['likes']['count'])
@@ -62,7 +67,7 @@ def fill_db_tables(days=14):
                 # comments
                 try:
                     comments = vkapi.wall.getComments(owner_id=OWNER_ID, post_id=post_id, need_likes=True, v=V)
-                except requests.exceptions.RequestException:
+                except VkException:
                     print('ConnectionError')
                     continue
                 for comment_json in comments['items']:
